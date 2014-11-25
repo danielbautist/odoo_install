@@ -71,7 +71,7 @@ sudo chmod 640 /etc/$ODOO_CONFIG.conf
 
 #--------------------------------------------------
 echo "AUTOMATIZAR EL ARRANQUE Y STOP DEL SERVICIO DE ODOO"
-echo -e "* Create file openerp-server"
+echo -e "* Create file odoo-server"
 echo '#!/bin/sh' >> ~/$ODOO_CONFIG
 echo '### BEGIN INIT INFO' >> ~/$ODOO_CONFIG
 echo '# Provides: $ODOO_CONFIG' >> ~/$ODOO_CONFIG
@@ -82,7 +82,7 @@ echo '# Should-Stop: $network' >> ~/$ODOO_CONFIG
 echo '# Default-Start: 2 3 4 5' >> ~/$ODOO_CONFIG
 echo '# Default-Stop: 0 1 6' >> ~/$ODOO_CONFIG
 echo '# Short-Description: Enterprise Resource Management software' >> ~/$ODOO_CONFIG
-echo '# Description: Open ERP is a complete ERP and CRM software.' >> ~/$ODOO_CONFIG
+echo '# Description: ODOO Business Applications.' >> ~/$ODOO_CONFIG
 echo '### END INIT INFO' >> ~/$ODOO_CONFIG
 echo 'PATH=/bin:/sbin:/usr/bin' >> ~/$ODOO_CONFIG
 echo "DAEMON=$ODOO_HOME_SERVER/openerp-server" >> ~/$ODOO_CONFIG
