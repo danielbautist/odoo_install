@@ -7,6 +7,7 @@ ODOO_HOME="/opt/$ODOO_USER"
 ODOO_HOME_SERVER="$ODOO_HOME/server"
 ODOO_CONFIG="$ODOO_USER-server"
 
+sudo su
 #--------------------------------------------------
 echo "ACTUALIZACION DEL SISTEMA"
 sudo apt-get update
@@ -22,6 +23,7 @@ sudo /etc/init.d/postgresql restart
 sudo su - postgres -c "createuser -s $ODOO_USER" 2> /dev/null || true
 psql -U postgres -c "alter role $ODOO_USER with password '$ODOO_PASSWORD';"
 psql -U postgres -c "alter role postgres with password '$PASSWORD_POSTGRES';"
+exit
 sudo sed -i s/"local    all             postgres                                trust"/"local   all             postgres                                md5 "/g /etc/postgresql/9.3/main/pg_hba.conf
 sudo sed -i s/"local   all             all                                     peer"/"local   all             $ODOO_USER                                    md5"/g /etc/postgresql/9.3/main/pg_hba.conf
 sudo /etc/init.d/postgresql restart
@@ -55,6 +57,7 @@ for v in $(ls); do
                 break
         fi
 done
+sudo rm $tar_odoo
 sudo su $ODOO_USER -c "chmod -R 775 $ODOO_HOME/*"
 
 echo "CREAR ARCHIVO DE REGISTRO"
@@ -81,67 +84,71 @@ echo '# Should-Start: $network' >> ~/$ODOO_CONFIG
 echo '# Should-Stop: $network' >> ~/$ODOO_CONFIG
 echo '# Default-Start: 2 3 4 5' >> ~/$ODOO_CONFIG
 echo '# Default-Stop: 0 1 6' >> ~/$ODOO_CONFIG
-echo '# Short-Description: Enterprise Resource Management software' >> ~/$ODOO_CONFIG
-echo '# Description: ODOO Business Applications.' >> ~/$ODOO_CONFIG
+echo '# Short-Description: Enterprise Business Applications' >> ~/$ODOO_CONFIG
+echo '# Description: ODOO Business Applications' >> ~/$ODOO_CONFIG
 echo '### END INIT INFO' >> ~/$ODOO_CONFIG
 echo 'PATH=/bin:/sbin:/usr/bin' >> ~/$ODOO_CONFIG
 echo "DAEMON=$ODOO_HOME_SERVER/openerp-server" >> ~/$ODOO_CONFIG
 echo "NAME=$ODOO_CONFIG" >> ~/$ODOO_CONFIG
 echo "DESC=$ODOO_CONFIG" >> ~/$ODOO_CONFIG
+echo '' >> ~/$ODOO_CONFIG
 echo '# Specify the user name (Default: odoo).' >> ~/$ODOO_CONFIG
 echo "USER=$ODOO_USER" >> ~/$ODOO_CONFIG
-echo '# Specify an alternate config file (Default: /etc/odoo-server.conf).' >> ~/$ODOO_CONFIG
+echo '' >> ~/$ODOO_CONFIG
+echo '# Specify an alternate config file (Default: /etc/openerp-server.conf).' >> ~/$ODOO_CONFIG
 echo "CONFIGFILE=\"/etc/$ODOO_CONFIG.conf\"" >> ~/$ODOO_CONFIG
+echo '' >> ~/$ODOO_CONFIG
 echo '# pidfile' >> ~/$ODOO_CONFIG
 echo 'PIDFILE=/var/run/$NAME.pid' >> ~/$ODOO_CONFIG
+echo '' >> ~/$ODOO_CONFIG
 echo '# Additional options that are passed to the Daemon.' >> ~/$ODOO_CONFIG
 echo 'DAEMON_OPTS="-c $CONFIGFILE"' >> ~/$ODOO_CONFIG
-echo '' >> ~/$ODOO_CONFIG
 echo '[ -x $DAEMON ] || exit 0' >> ~/$ODOO_CONFIG
 echo '[ -f $CONFIGFILE ] || exit 0' >> ~/$ODOO_CONFIG
 echo 'checkpid() {' >> ~/$ODOO_CONFIG
-echo '    [ -f $PIDFILE ] || return 1' >> ~/$ODOO_CONFIG
-echo '    pid=`cat $PIDFILE`' >> ~/$ODOO_CONFIG
-echo '    [ -d /proc/$pid ] && return 0' >> ~/$ODOO_CONFIG
-echo '    return 1' >> ~/$ODOO_CONFIG
+echo '[ -f $PIDFILE ] || return 1' >> ~/$ODOO_CONFIG
+echo 'pid=`cat $PIDFILE`' >> ~/$ODOO_CONFIG
+echo '[ -d /proc/$pid ] && return 0' >> ~/$ODOO_CONFIG
+echo 'return 1' >> ~/$ODOO_CONFIG
 echo '}' >> ~/$ODOO_CONFIG
 echo '' >> ~/$ODOO_CONFIG
 echo 'case "${1}" in' >> ~/$ODOO_CONFIG
-echo '        start)' >> ~/$ODOO_CONFIG
-echo '                echo -n "Starting ${DESC}: "' >> ~/$ODOO_CONFIG
-echo '                start-stop-daemon --start --quiet --pidfile ${PIDFILE} \' >> ~/$ODOO_CONFIG
-echo '                        --chuid ${USER} --background --make-pidfile \' >> ~/$ODOO_CONFIG
-echo '                        --exec ${DAEMON} -- ${DAEMON_OPTS}' >> ~/$ODOO_CONFIG
-echo '                echo "${NAME}."' >> ~/$ODOO_CONFIG
-echo '                ;;' >> ~/$ODOO_CONFIG
-echo '        stop)' >> ~/$ODOO_CONFIG
-echo '                echo -n "Stopping ${DESC}: "' >> ~/$ODOO_CONFIG
-echo '                start-stop-daemon --stop --quiet --pidfile ${PIDFILE} \' >> ~/$ODOO_CONFIG
-echo '                        --oknodo' >> ~/$ODOO_CONFIG
-echo '                echo "${NAME}."' >> ~/$ODOO_CONFIG
-echo '                ;;' >> ~/$ODOO_CONFIG
+echo 'start)' >> ~/$ODOO_CONFIG
+echo 'echo -n "Starting ${DESC}: "' >> ~/$ODOO_CONFIG
+echo 'start-stop-daemon --start --quiet --pidfile ${PIDFILE} \' >> ~/$ODOO_CONFIG
+echo '--chuid ${USER} --background --make-pidfile \' >> ~/$ODOO_CONFIG
+echo '--exec ${DAEMON} -- ${DAEMON_OPTS}' >> ~/$ODOO_CONFIG
+echo 'echo "${NAME}."' >> ~/$ODOO_CONFIG
+echo ';;' >> ~/$ODOO_CONFIG
+echo 'stop)' >> ~/$ODOO_CONFIG
+echo 'echo -n "Stopping ${DESC}: "' >> ~/$ODOO_CONFIG
+echo 'start-stop-daemon --stop --quiet --pidfile ${PIDFILE} \' >> ~/$ODOO_CONFIG
+echo '--oknodo' >> ~/$ODOO_CONFIG
+echo 'echo "${NAME}."' >> ~/$ODOO_CONFIG
+echo ';;' >> ~/$ODOO_CONFIG
 echo '' >> ~/$ODOO_CONFIG
-echo '        restart|force-reload)' >> ~/$ODOO_CONFIG
-echo '                echo -n "Restarting ${DESC}: "' >> ~/$ODOO_CONFIG
-echo '                start-stop-daemon --stop --quiet --pidfile ${PIDFILE} \' >> ~/$ODOO_CONFIG
-echo '                        --oknodo' >> ~/$ODOO_CONFIG
-echo '                sleep 1' >> ~/$ODOO_CONFIG
-echo '                start-stop-daemon --start --quiet --pidfile ${PIDFILE} \' >> ~/$ODOO_CONFIG
-echo '                        --chuid ${USER} --background --make-pidfile \' >> ~/$ODOO_CONFIG
-echo '                        --exec ${DAEMON} -- ${DAEMON_OPTS}' >> ~/$ODOO_CONFIG
-echo '                echo "${NAME}."' >> ~/$ODOO_CONFIG
-echo '                ;;' >> ~/$ODOO_CONFIG
-echo '        *)' >> ~/$ODOO_CONFIG
-echo '                N=/etc/init.d/${NAME}' >> ~/$ODOO_CONFIG
-echo '                echo "Usage: ${NAME} {start|stop|restart|force-reload}" >&2' >> ~/$ODOO_CONFIG
-echo '                exit 1' >> ~/$ODOO_CONFIG
-echo '                ;;' >> ~/$ODOO_CONFIG
+echo 'restart|force-reload)' >> ~/$ODOO_CONFIG
+echo 'echo -n "Restarting ${DESC}: "' >> ~/$ODOO_CONFIG
+echo 'start-stop-daemon --stop --quiet --pidfile ${PIDFILE} \' >> ~/$ODOO_CONFIG
+echo '--oknodo' >> ~/$ODOO_CONFIG
+echo 'sleep 1' >> ~/$ODOO_CONFIG
+echo 'start-stop-daemon --start --quiet --pidfile ${PIDFILE} \' >> ~/$ODOO_CONFIG
+echo '--chuid ${USER} --background --make-pidfile \' >> ~/$ODOO_CONFIG
+echo '--exec ${DAEMON} -- ${DAEMON_OPTS}' >> ~/$ODOO_CONFIG
+echo 'echo "${NAME}."' >> ~/$ODOO_CONFIG
+echo ';;' >> ~/$ODOO_CONFIG
+echo '*)' >> ~/$ODOO_CONFIG
+echo 'N=/etc/init.d/${NAME}' >> ~/$ODOO_CONFIG
+echo 'echo "Usage: ${NAME} {start|stop|restart|force-reload}" >&2' >> ~/$ODOO_CONFIG
+echo 'exit 1' >> ~/$ODOO_CONFIG
+echo ';;' >> ~/$ODOO_CONFIG
+echo '' >> ~/$ODOO_CONFIG
 echo 'esac' >> ~/$ODOO_CONFIG
 echo 'exit 0' >> ~/$ODOO_CONFIG
 
 sudo mv ~/$ODOO_CONFIG /etc/init.d/
 sudo chmod 755 /etc/init.d/$ODOO_CONFIG
-sudo chown root /etc/init.d/$ODOO_CONFIG
+sudo chown root: /etc/init.d/$ODOO_CONFIG
 sudo update-rc.d $ODOO_CONFIG defaults
 #--------------------------------------------------
 
