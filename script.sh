@@ -43,6 +43,8 @@ sudo apt-get update
 #--------------------------------------------------
 echo "INSTALAR ODOO"
 sudo adduser --system --quiet --shell=/bin/bash --home=$ODOO_HOME --gecos 'ODOO' --group $ODOO_USER
+sudo mkdir /var/log/$ODOO_USER
+sudo chown $ODOO_USER:$ODOO_USER /var/log/$ODOO_USER
 cd $ODOO_HOME
 sudo wget http://nightly.odoo.com/8.0/nightly/src/odoo_8.0-latest.tar.gz
 tar_odoo=$(ls)
@@ -56,8 +58,6 @@ done
 sudo su $ODOO_USER -c "chmod -R 775 $ODOO_HOME/*"
 
 echo "CREAR ARCHIVO DE REGISTRO"
-sudo mkdir /var/log/$ODOO_USER
-sudo chown $ODOO_USER:$ODOO_USER /var/log/$ODOO_USER
 sudo su root -c "echo '[options]' >> /etc/$ODOO_CONFIG.conf"
 sudo su root -c "echo 'db_host=False' >> /etc/$ODOO_CONFIG.conf"
 sudo su root -c "echo 'db_port=False' >> /etc/$ODOO_CONFIG.conf"
@@ -65,7 +65,7 @@ sudo su root -c "echo 'db_user=$ODOO_USER' >> /etc/$ODOO_CONFIG.conf"
 sudo su root -c "echo 'db_password=$ODOO_PASSWORD' >> /etc/$ODOO_CONFIG.conf"
 sudo su root -c "echo 'logfile=/var/log/$ODOO_USER/$ODOO_CONFIG.log' >> /etc/$ODOO_CONFIG.conf"
 sudo su root -c "echo 'addons_path=$ODOO_HOME_SERVER/openerp/addons' >> /etc/$ODOO_CONFIG.conf"
-sudo chown ODOO_USER:$ODOO_USER /etc/$ODOO_CONFIG.conf
+sudo chown $ODOO_USER:$ODOO_USER /etc/$ODOO_CONFIG.conf
 sudo chmod 640 /etc/$ODOO_CONFIG.conf
 #--------------------------------------------------
 
@@ -142,6 +142,7 @@ echo 'exit 0' >> ~/$ODOO_CONFIG
 sudo mv ~/$ODOO_CONFIG /etc/init.d/
 sudo chmod 755 /etc/init.d/$ODOO_CONFIG
 sudo chown root /etc/init.d/$ODOO_CONFIG
+sudo update-rc.d $ODOO_CONFIG defaults
 #--------------------------------------------------
 
 echo "Instalación del SERVICIO ODOO terminado, ingresar por el puerto 8069"
