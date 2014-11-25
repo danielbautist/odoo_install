@@ -10,7 +10,7 @@ ODOO_CONFIG="$ODOO_USER-server"
 #--------------------------------------------------
 echo "ACTUALIZACION DEL SISTEMA"
 sudo apt-get update
-#sudo apt-get dist-upgrade -y
+sudo apt-get dist-upgrade -y
 #--------------------------------------------------
 
 #--------------------------------------------------
