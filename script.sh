@@ -14,16 +14,17 @@ sudo apt-get update
 #--------------------------------------------------
 
 #--------------------------------------------------
+cat /dev/null > un_archivo.txt
 echo "INSTALACION Y CONFIGURACION DE POSTGRESQL"
 sudo apt-get install postgresql -y
 sudo sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /etc/postgresql/9.3/main/postgresql.conf
-sudo sed -i s/"local   all             postgres                                peer"/"local    all             postgres                                trust"/g /etc/postgresql/9.3/main/postgresql.conf
+sudo sed -i s/"local   all             postgres                                peer"/"local    all             postgres                                trust"/g /etc/postgresql/9.3/main/pg_hba.conf
 sudo /etc/init.d/postgresql restart
 sudo su - postgres -c "createuser -s $ODOO_USER" 2> /dev/null || true
 psql -U postgres -c "alter role $ODOO_USER with password '$ODOO_PASSWORD';"
 psql -U postgres -c "alter role postgres with password '$PASSWORD_POSTGRES';"
-sudo sed -i s/"local   all             postgres                                trust"/"local   all             postgres                                md5 "/g /etc/postgresql/9.3/main/postgresql.conf
-sudo sed -i s/"local   all             all                                     peer"/"local     all             $ODOO_USER                                    md5"/g /etc/postgresql/9.3/main/postgresql.conf
+sudo sed -i s/"local   all             postgres                                trust"/"local   all             postgres                                md5 "/g /etc/postgresql/9.3/main/pg_hba.conf
+sudo sed -i s/"local   all             all                                     peer"/"local     all             $ODOO_USER                                    md5"/g /etc/postgresql/9.3/main/pg_hba.conf
 sudo /etc/init.d/postgresql restart
 #--------------------------------------------------
 
