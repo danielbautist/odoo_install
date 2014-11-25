@@ -74,7 +74,7 @@ echo "AUTOMATIZAR EL ARRANQUE Y STOP DEL SERVICIO DE ODOO"
 echo -e "* Create file odoo-server"
 echo '#!/bin/sh' >> ~/$ODOO_CONFIG
 echo '### BEGIN INIT INFO' >> ~/$ODOO_CONFIG
-echo '# Provides: $ODOO_CONFIG' >> ~/$ODOO_CONFIG
+echo "# Provides: $ODOO_CONFIG" >> ~/$ODOO_CONFIG
 echo '# Required-Start: $remote_fs $syslog' >> ~/$ODOO_CONFIG
 echo '# Required-Stop: $remote_fs $syslog' >> ~/$ODOO_CONFIG
 echo '# Should-Start: $network' >> ~/$ODOO_CONFIG
@@ -90,7 +90,7 @@ echo "NAME=$ODOO_CONFIG" >> ~/$ODOO_CONFIG
 echo "DESC=$ODOO_CONFIG" >> ~/$ODOO_CONFIG
 echo '# Specify the user name (Default: odoo).' >> ~/$ODOO_CONFIG
 echo "USER=$ODOO_USER" >> ~/$ODOO_CONFIG
-echo '# Specify an alternate config file (Default: /etc/openerp-server.conf).' >> ~/$ODOO_CONFIG
+echo '# Specify an alternate config file (Default: /etc/odoo-server.conf).' >> ~/$ODOO_CONFIG
 echo "CONFIGFILE=\"/etc/$ODOO_CONFIG.conf\"" >> ~/$ODOO_CONFIG
 echo '# pidfile' >> ~/$ODOO_CONFIG
 echo 'PIDFILE=/var/run/$NAME.pid' >> ~/$ODOO_CONFIG
