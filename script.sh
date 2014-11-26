@@ -22,7 +22,6 @@ sudo /etc/init.d/postgresql restart
 sudo su - postgres -c "createuser -s $ODOO_USER" 2> /dev/null || true
 psql -U postgres -c "alter role $ODOO_USER with password '$ODOO_PASSWORD';"
 psql -U postgres -c "alter role postgres with password '$PASSWORD_POSTGRES';"
-exit
 sudo sed -i s/"local    all             postgres                                trust"/"local   all             postgres                                md5 "/g /etc/postgresql/9.3/main/pg_hba.conf
 sudo sed -i s/"local   all             all                                     peer"/"local   all             $ODOO_USER                                    md5"/g /etc/postgresql/9.3/main/pg_hba.conf
 sudo /etc/init.d/postgresql restart
@@ -37,8 +36,8 @@ python-zsi python-openssl python-egenix-mxdatetime python-jinja2 python-unittest
 python-pdftools antiword python-decorator python-requests python-pypdf python-passlib bzrtools python-libxml2 python-gdata python-numpy python-hippocanvas python-profiler \
 postgresql-client-common git-core aptitude python-pil wkhtmltopdf python-pip -y
 
-#sudo pip install httplib2
-#sudo apt-get update
+sudo pip install httplib2
+sudo apt-get update
 #--------------------------------------------------
 
 #--------------------------------------------------
