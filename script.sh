@@ -7,7 +7,6 @@ ODOO_HOME="/opt/$ODOO_USER"
 ODOO_HOME_SERVER="$ODOO_HOME/server"
 ODOO_CONFIG="$ODOO_USER-server"
 
-sudo su
 #--------------------------------------------------
 echo "ACTUALIZACION DEL SISTEMA"
 sudo apt-get update
@@ -38,8 +37,8 @@ python-zsi python-openssl python-egenix-mxdatetime python-jinja2 python-unittest
 python-pdftools antiword python-decorator python-requests python-pypdf python-passlib bzrtools python-libxml2 python-gdata python-numpy python-hippocanvas python-profiler \
 postgresql-client-common git-core aptitude python-pil wkhtmltopdf python-pip -y
 
-sudo pip install httplib2
-sudo apt-get update
+#sudo pip install httplib2
+#sudo apt-get update
 #--------------------------------------------------
 
 #--------------------------------------------------
